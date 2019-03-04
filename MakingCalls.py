@@ -22,20 +22,22 @@ chrome_options.add_argument('--disable-gpu')
 # Launch browser
 driver = webdriver.Chrome(executable_path=chrome_path,chrome_options=chrome_options)
 # Go to DZ page
-driver.get('http://houston.spacelandclock.com')
+driver.get('http://atlanta.spacelandclock.com')
+# Going to the frame
+driver.switch_to.frame(driver.find_element_by_name("mainFrame"))
 # Keep monitoring
 while (1):
-    for e in driver.find_element_by_id('clock').find_elements_by_xpath("*[contains(@id,'tm')]"):
+    for e in driver.find_elements_by_xpath("//*[contains(@class,'Load null')]"):
         ThisText=e.text
         # If there are loads on the screen
         if (len(ThisText)>0):
-            CallTime=int(ThisText.split()[2].split(':')[0].strip())
+            CallTime=int(ThisText.split('\n')[1].split(':')[0].strip())
             # If the time is 5:XX, 10:XX , 15:XX, ...
             if (CallTime % 5 == 0 ):
                 # Wait a minute to make the call only once
                 sleep(60)
                 CallCarrierType=ThisText.split()[0].split('-')[0].strip()
-                CallCarrierNumber=ThisText.split()[1].strip()
+                CallCarrierNumber=ThisText.split('\n')[0].split()[-1].strip()
                 # Print for troubleshooting
                 #print(CallCarrierType,CallCarrierNumber,CallTime)
                 # Send to Spresense via Serial values separated by "|"
